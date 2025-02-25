@@ -1,0 +1,30 @@
+# Arquivos de ambiente
+.env
+
+# Diretórios de dependências
+node_modules/
+vendor/
+
+# Diretórios de build
+dist/
+build/
+
+# Arquivos de log
+*.log
+logs/
+
+# Arquivos temporários
+*.tmp
+*.temp
+
+# Arquivos de sistema operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos de IDE
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates

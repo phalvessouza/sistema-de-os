@@ -1,7 +1,11 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const ordensRouter = require('./routes/ordens');
+const locaisRouter = require('./routes/locais');
 const sequelize = require('./config/database');
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+const errorHandler = require('./middleware/errorHandler');
 
 dotenv.config();
 
@@ -10,14 +14,38 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
+const swaggerOptions = {
+    swaggerDefinition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Sistema de Chamados de TI',
+            version: '1.0.0',
+            description: 'API para gerenciamento de chamados de TI'
+        },
+        servers: [
+            {
+                url: `http://localhost:${PORT}`
+            }
+        ]
+    },
+    apis: ['./routes/*.js']
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
 // Sincronizar o banco de dados
 sequelize.sync()
-    .then(() => console.log('Banco de dados sincronizado'))
+    .then(() => {
+        app.listen(PORT, () => {
+            console.log(`Servidor rodando na porta ${PORT}`);
+        });
+    })
     .catch(err => console.error('Erro ao sincronizar o banco de dados', err));
 
 // Usar as rotas de ordens
-app.use('/api', ordensRouter);
+app.use('/ordens', ordensRouter);
+app.use('/locais', locaisRouter);
 
-app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
-});
+// Middleware de tratamento de erros
+app.use(errorHandler);

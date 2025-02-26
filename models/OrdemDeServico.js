@@ -1,8 +1,8 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
+const Local = require('./Local');
 
 const OrdemDeServico = sequelize.define('OrdemDeServico', {
-    local: DataTypes.STRING,
     observacao: DataTypes.STRING,
     descricaoDetalhada: DataTypes.TEXT,
     horarioAbertura: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
@@ -14,5 +14,8 @@ const OrdemDeServico = sequelize.define('OrdemDeServico', {
     categoria: { type: DataTypes.ENUM('Hardware', 'Software', 'Rede', 'Outros'), defaultValue: 'Outros' },
     historicoStatus: DataTypes.JSONB
 });
+
+// Definindo o relacionamento
+OrdemDeServico.belongsTo(Local, { foreignKey: 'localId', as: 'local' });
 
 module.exports = OrdemDeServico;

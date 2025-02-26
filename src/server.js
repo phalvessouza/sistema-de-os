@@ -1,16 +1,22 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const ordensRouter = require('./src/routes/ordens');
-const locaisRouter = require('./src/routes/locais');
-const sequelize = require('./src/config/database');
+const helmet = require('helmet');
+const cors = require('cors');
+const morgan = require('morgan');
+const ordensRouter = require('./routes/ordens');
+const locaisRouter = require('./routes/locais');
+const sequelize = require('./config/database');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
-const errorHandler = require('./src/middleware/errorHandler');
+const errorHandler = require('./middleware/errorHandler');
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.use(helmet());
+app.use(cors());
+app.use(morgan('dev'));
 
 const PORT = process.env.PORT || 3000;
 
@@ -35,13 +41,18 @@ const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Sincronizar o banco de dados
-sequelize.sync()
-    .then(() => {
+const startServer = async () => {
+    try {
+        await sequelize.sync();
         app.listen(PORT, () => {
             console.log(`Servidor rodando na porta ${PORT}`);
         });
-    })
-    .catch(err => console.error('Erro ao sincronizar o banco de dados', err));
+    } catch (err) {
+        console.error('Erro ao sincronizar o banco de dados', err);
+    }
+};
+
+startServer();
 
 // Usar as rotas de ordens
 app.use('/ordens', ordensRouter);

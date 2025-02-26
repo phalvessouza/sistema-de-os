@@ -1,11 +1,11 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const ordensRouter = require('./routes/ordens');
-const locaisRouter = require('./routes/locais');
-const sequelize = require('./config/database');
+const ordensRouter = require('./src/routes/ordens');
+const locaisRouter = require('./src/routes/locais');
+const sequelize = require('./src/config/database');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
-const errorHandler = require('./middleware/errorHandler');
+const errorHandler = require('./src/middleware/errorHandler');
 
 dotenv.config();
 
@@ -28,7 +28,7 @@ const swaggerOptions = {
             }
         ]
     },
-    apis: ['./routes/*.js']
+    apis: ['./src/routes/*.js']
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
